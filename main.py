@@ -177,7 +177,7 @@ class GAME_GUI(GAME_BOARD):
             if self.is_general_game():
                 if self.full_board_check():
                     if self.full_board_check():
-                    self.restart()
+                        self.restart()
                     return None
                 else:
                     self.set_r_turn()
@@ -210,7 +210,7 @@ class START_MENU():
         
     def start_game(self):
         try:
-            board_size = self.enter_board_size.get()
+            board_size = self.enter_size.get()
             board_size = int(board_size)
         except ValueError:
             messagebox.showerror(
