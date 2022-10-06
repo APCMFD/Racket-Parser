@@ -47,8 +47,8 @@ class GAME_GUI(GAME_BOARD):
         super().__init__(board_size)
         # define window and widget variables
         self.WIN = Tk()
-        self.WIN_WIDTH = 1800
-        self.WIN_HEIGHT = 1200
+        self.WIN_WIDTH = 1600
+        self.WIN_HEIGHT = 1000
         self.WIN_TITLE = 'SOS'
         self.BUTTON_HEIGHT = 4
         self.BUTTON_WIDTH = 8
