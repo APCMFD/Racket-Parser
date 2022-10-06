@@ -77,7 +77,7 @@ class GAME_GUI(GAME_BOARD):
         for r in range(self.row_num):
             for c in range(self.col_num):
                 tile = self.board[r][c] = Button(
-                    self.WINDOW, bg="white", text=' ', height=self.BUTTON_HEIGHT, width=self.BUTTON_WIDTH, command=lambda row1=r, col1=c: self.move(row1, col1))
+                    self.WIN, bg="white", text=' ', height=self.BUTTON_HEIGHT, width=self.BUTTON_WIDTH, command=lambda row1=r, col1=c: self.move(row1, col1))
                 tile.grid(row=r, column=c, padx=2, pady=2)
                 
         # simple and general game buttons
