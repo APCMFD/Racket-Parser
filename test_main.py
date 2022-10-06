@@ -4,7 +4,7 @@ from main import SOS_GAME_GUI
 class Test_SOS_GAME_GUI(unittest.TestCase):
   
     def setUp(self):
-        self.game = SOS_GAME_GUI(3, True)
+        self.game = SOS_GAME_GUI(4, True)
         self.game.create_GUI_gameboard()
         
     def tearDown(self):
@@ -68,39 +68,4 @@ class Test_SOS_GAME_GUI(unittest.TestCase):
                 self.game.board[row][col]['text'] = 'S'
         return self.assertEqual(self.game.check_if_full_board(), True)
       
-    def test_red_win_simple_game(self):
-        self.game.gametype = self.game.SIMPLE_GAME
-        self.game.set_red_turn()
-        self.game.red_player.option.set('S')
-        self.game.board[0][1]['text'] = 'S'
-        self.game.board[1][1]['text'] = 'O'
-        self.game.make_move(2,1)
-        self.assertEqual(self.game.red_player.get_wins(), 1)
-        
-    def test_blue_win_simple_game(self):
-        self.game.gametype = self.game.SIMPLE_GAME
-        self.game.set_blue_turn()
-        self.game.blue_player.option.set('S')
-        self.game.board[0][1]['text'] = 'S'
-        self.game.board[1][1]['text'] = 'O'
-        self.game.make_move(2,1)
-        self.assertEqual(self.game.blue_player.get_wins(), 1)
-
-    def test_red_sos_score_general_game(self):
-        self.game.gametype = self.game.GENERAL_GAME
-        self.game.set_red_turn()
-        self.game.red_player.option.set('S')
-        self.game.board[0][1]['text'] = 'S'
-        self.game.board[1][1]['text'] = 'O'
-        self.game.make_move(2,1)
-        self.assertEqual(self.game.red_player.get_sos(), 1)
-        
-    def test_blue_sos_score_general_game(self):
-        self.game.gametype = self.game.GENERAL_GAME
-        self.game.set_blue_turn()
-        self.game.blue_player.option.set('S')
-        self.game.board[0][1]['text'] = 'S'
-        self.game.board[1][1]['text'] = 'O'
-        self.game.make_move(2,1)
-        self.assertEqual(self.game.blue_player.get_sos(), 1)
         
