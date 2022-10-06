@@ -47,8 +47,8 @@ class GAME_GUI(GAME_BOARD):
         super().__init__(board_size)
         # define window and widget variables
         self.WIN = Tk()
-        self.WIN_WIDTH = 1600
-        self.WIN_HEIGHT = 1000
+        self.WIN_WIDTH = 1200
+        self.WIN_HEIGHT = 700
         self.WIN_TITLE = 'SOS'
         self.BUTTON_HEIGHT = 4
         self.BUTTON_WIDTH = 8
@@ -195,7 +195,7 @@ class START_MENU():
 
     def __init__(self):
         self.WIN_SIZE = Tk()
-        self.WIN_SIZE.geometry("600x600")
+        self.WIN_SIZE.geometry("400x400")
         self.WIN_SIZE.title("Select Board Size")
         self.record = BooleanVar()
         self.label = Label(self.WIN_SIZE, text="Enter a board size (must be greater than 2)")
