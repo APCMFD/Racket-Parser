@@ -1,141 +1,234 @@
 from tkinter import *
 from tkinter import messagebox
-# widgets = GUI elements: buttons, textboxes, labels, images
-# windows = serves as a container to hold or contain these widgets
 
-class SOS_GAME_BOARD():
+class Player():
 
-    NUM_ROWS = 8
-    NUM_COLS = 8
-    
-    board = []
-    
-    def __init__(self):
-        self.create_board()
+    def __init__(self, name, color):
+        self.name = name
+        self.color = color
+        self.option = StringVar()
         
-    def create_board(self):
-        for row in range(self.NUM_ROWS):
+    def get_option(self):
+        return self.option
+
+class GAME_BOARD():
+
+    def __init__(self, board_size):
+        self.row_num = board_size
+        self.col_num = board_size
+        self.board = []
+        self.create_skeleton()
+        
+    def create_skeleton(self):
+        for row in range(self.row_num):
             self.board.append([])
-            for col in range(self.NUM_COLS):
+            for col in range(self.col_num):
                 self.board[row].append(0)  # append empty cell
                 
-    def get_cell_value(self, row, col):
-        return self.board[row][col]
-        
-class SOS_GAME_GUI():
-    # define window and widget variables
-    WINDOW_WIDTH = 1000
-    WINDOW_HEIGHT = 500
-    WINDOW = Tk()
-    WINDOW_TITLE = 'Morgan\'s SOS Game'
-    BUTTON_HEIGHT = 3
-    BUTTON_WIDTH = 6
-    SIMPLE_GAME = 'Simple Game'
-    GENERAL_GAME = 'General Game'
-    RED_TURN = 'Red\'s Turn'
-    BLUE_TURN = 'Blue\'s Turn'
-    
-    def __init__(self):
-        self.gameboard = SOS_GAME_BOARD()
-        self.gametype = ' '
-        self.red_player_option = StringVar()
-        self.blue_player_option = StringVar()
-        self.current_turn_string = StringVar()
-        self.set_red_turn()
-
-    def start(self):
-        self.create_GUI_gameboard()
-        self.WINDOW.mainloop() # place window on computer screen, listen for events
-        
-    def restart(self):
-        for r in range(self.gameboard.NUM_ROWS):
-            for c in range(self.gameboard.NUM_COLS):
-                tile = self.gameboard.board[r][c]
+    def reset_board(self):
+        for r in range(self.row_num):
+            for c in range(self.col_num):
+                tile = self.board[r][c]
                 tile['text'] = ' '
+                tile['bg'] = 'white'
+                
+    def cell_button(self, row, col):
+        return self.board[row][col]
 
-    def create_GUI_gameboard(self):
-        self.WINDOW.geometry(f"{self.WINDOW_WIDTH}x{self.WINDOW_HEIGHT}")
-        self.WINDOW.title(self.WINDOW_TITLE)
+    def full_board_check(self):
+        for row in range(self.row_num):
+            for col in range(self.col_num):
+                if self.board[row][col]['text'] == ' ':
+                    return False
+        return True
+   
+class GAME_GUI(GAME_BOARD):
+    def __init__(self, board_size):
+        super().__init__(board_size)
+        # define window and widget variables
+        self.WIN = Tk()
+        self.WIN_WIDTH = 1800
+        self.WIN_HEIGHT = 1200
+        self.WIN_TITLE = 'SOS'
+        self.BUTTON_HEIGHT = 4
+        self.BUTTON_WIDTH = 8
+        self.R_TURN = 'Red\'s Turn'
+        self.B_TURN = 'Blue\'s Turn'
+        self.SIMPLE_GAME = 'Simple Game'
+        self.GENERAL_GAME = 'General Game'
+        self.red_player = Player("red player", "red")
+        self.blue_player = Player("blue player", "blue")
+        self.current_turn = StringVar()
+        self.gametype = ' '
+        self.set_r_turn()
         
-        for r in range(self.gameboard.NUM_ROWS):
-            for c in range(self.gameboard.NUM_COLS):
-                tile = self.gameboard.board[r][c] = Button(self.WINDOW, bg="SystemButtonFace", height=self.BUTTON_HEIGHT, width=self.BUTTON_WIDTH, command=lambda row1 = r, col1 = c: self.make_move(row1, col1))
-                tile.grid(row=r, column=c, padx= 2, pady=2)
+    def start(self):
+        # place window on computer screen, listen for events
+        self.WIN.mainloop()
+            
+    def restart(self):
+        self.reset_board()
+        self.set_r_turn()
+
+    def gameboard_GUI(self):
+        self.WIN.geometry(f"{self.WIN_WIDTH}x{self.WIN_HEIGHT}")
+        self.WIN.title(self.WIN_TITLE)
+        
+        for r in range(self.row_num):
+            for c in range(self.col_num):
+                tile = self.board[r][c] = Button(
+                    self.WINDOW, bg="white", text=' ', height=self.BUTTON_HEIGHT, width=self.BUTTON_WIDTH, command=lambda row1=r, col1=c: self.move(row1, col1))
+                tile.grid(row=r, column=c, padx=2, pady=2)
                 
         # simple and general game buttons
-        simple_game_button = Radiobutton(self.WINDOW, text='Simple Game', variable=self.gametype, value=self.SIMPLE_GAME, command=lambda: self.start_simple_game())
-        simple_game_button.grid(row=0, column=9)
-        general_game_button = Radiobutton(self.WINDOW, text='General Game', variable=self.gametype, value=self.GENERAL_GAME, command=lambda: self.start_general_game())
-        general_game_button.grid(row=0, column=10)
-
+        simple_game_button = Radiobutton(self.WIN, text='Simple Game', variable=self.gametype,
+                                         value=self.SIMPLE_GAME, command=lambda: self.start_simple_game())
+        simple_game_button.grid(row=0, column=self.col_num+2)
+        general_game_button = Radiobutton(self.WIN, text='General Game', variable=self.gametype,
+                                          value=self.GENERAL_GAME, command=lambda: self.start_general_game())
+        general_game_button.grid(row=0, column=self.col_num+3)
+        
         # restart game button
-        restart_game_button = Button(self.WINDOW, text= 'Restart Game', command=lambda: self.restart())
-        restart_game_button.grid(row=7, column=11)
-
+        restart_game_button = Button(
+            self.WIN, text='Restart Game', command=lambda: self.restart())
+        restart_game_button.grid(row=5, column=self.col_num+3)
+        
         # player labels
-        red_player_label = Label(self.WINDOW, text='RED PLAYER')
-        red_player_label.grid(row=2, column=9)
-        blue_player_label = Label(self.WINDOW, text='BLUE PLAYER')
-        blue_player_label.grid(row=2, column=10, padx=100)
-
+        red_label = Label(self.WIN, text='Red Player')
+        red_label.grid(row=1, column=self.col_num+2)
+        blue_label = Label(self.WIN, text='Blue Player')
+        blue_label.grid(row=1, column=self.col_num+3, padx=100)
+        
         # player S/O radio buttons
-        red_player_S_button = Radiobutton(self.WINDOW, text='S', variable= self.red_player_option, value='S', command=lambda: self.radio_click())
-        red_player_S_button.grid(row=3, column=9)
-        red_player_O_button = Radiobutton(self.WINDOW, text='O', variable= self.red_player_option, value='O', command=lambda: self.radio_click())
-        red_player_O_button.grid(row=4, column=9)
-        blue_player_S_button = Radiobutton(self.WINDOW, text='S', variable= self.blue_player_option, value='S', command=lambda: self.radio_click())
-        blue_player_S_button.grid(row=3, column=10)
-        blue_player_O_button = Radiobutton(self.WINDOW, text='O', variable= self.blue_player_option, value='O', command=lambda: self.radio_click())
-        blue_player_O_button.grid(row=4, column=10)
+        red_S_button = Radiobutton(
+            self.WIN, text='S', variable=self.red_player.option, value='S')
+        red_S_button.grid(row=2, column=self.col_num+2)
+        red_O_button = Radiobutton(
+            self.WIN, text='O', variable=self.red_player.option, value='O')
+        red_O_button.grid(row=3, column=self.col_num+2)
+        blue_S_button = Radiobutton(
+            self.WIN, text='S', variable=self.blue_player.option, value='S')
+        blue_S_button.grid(row=2, column=self.col_num+3)
+        blue_O_button = Radiobutton(
+            self.WIN, text='O', variable=self.blue_player.option, value='O')
+        blue_O_button.grid(row=3, column=self.col_num+3)
         
         # output of current turn label
-        current_turn_label = Label(self.WINDOW, textvariable=self.current_turn_string)
-        current_turn_label.grid(row=6, column=9)
-
-    def radio_click(self):
-        print('Red value: ', self.red_player_option.get())
-        print('Blue value: ', self.blue_player_option.get())
-
-    def start_simple_game(self):
+        current_turn_text = Label(self.WIN, textvariable=self.current_turn)
+        current_turn_text.grid(row=5, column=self.col_num+1)
+        
+    def start_simple(self):
         self.gametype = self.SIMPLE_GAME
         messagebox.showinfo('Game', self.gametype)
         
-    def start_general_game(self):
+    def start_general(self):
         self.gametype = self.GENERAL_GAME
         messagebox.showinfo('Game', self.gametype)
         
-    def make_move(self, row, col):
-        print('row: ', row, ' col: ', col)
-        tile = self.gameboard.get_cell_value(row, col)
+    def is_simple(self):
+        return self.gametype == self.SIMPLE_GAME
         
-        if (self.current_turn == self.RED_TURN) and (self.red_player_option.get() == 'S'):
-            tile['text'] = 'S'
-            self.set_blue_turn()
-            
-        elif (self.current_turn == self.RED_TURN) and (self.red_player_option.get() == 'O'):
-            tile['text'] = 'O'
-            self.set_blue_turn()
-            
-        elif (self.current_turn == self.BLUE_TURN) and (self.blue_player_option.get() == 'S'):
-            tile['text'] = 'S'
-            self.set_red_turn()
-            
-        elif(self.current_turn == self.BLUE_TURN) and (self.blue_player_option.get() == 'O'):
-            tile['text'] = 'O'
-            self.set_red_turn()
+    def is_general(self):
+        return self.gametype == self.GENERAL_GAME
+        
+    def move(self, row, col):
+        # print('row: ', row, ' col: ', col)
+        tile = self.cell_button(row, col)
+        if self.gametype == ' ':
+            messagebox.showerror('choose gamemode', 'please choose a gamemode')
+        elif tile['text'] == 'S' or tile['text'] == 'O':
+            messagebox.showerror(
+                'tile occupied', 'cannot make a move here - choose another tile')
+        elif (self.get_current_turn() == self.R_TURN):
+            if self.red_player.option.get() != 'S' and self.red_player.option.get() != 'O':
+                messagebox.showerror('choose option', 'player must choose S or O before making a move')
+                return None
+            tile['text'] = self.red_player.option.get()
+            color = self.red_player.color
 
+            if self.is_simple():
+                if self.full_board_check():
+                    self.restart()
+                    return None
+                else:
+                    self.set_b_turn()
+
+            elif self.is_general():
+                if self.full_board_check():
+                    self.restart()
+                    return None
+                else:
+                    self.set_b_turn()
+                    
+        elif (self.get_current_turn() == self.B_TURN):
+            if self.blue_player.option.get() != 'S' and self.blue_player.option.get() != 'O':
+                messagebox.showerror('choose option', 'player must choose S or O before making a move')
+                return None
+            tile['text'] = self.blue_player.option.get()
+            color = self.blue_player.color
+
+            if self.is_simple_game():   
+                if self.full_board_check():
+                    self.restart()
+                    return None
+                else:
+                    self.set_r_turn()
+
+            if self.is_general_game():
+                if self.full_board_check():
+                    if self.full_board_check():
+                    self.restart()
+                    return None
+                else:
+                    self.set_r_turn()
+                        
     def get_current_turn(self):
-        return self.current_turn
+        return self.current_turn.get()
         
-    def set_red_turn(self):
-        self.current_turn = self.RED_TURN
-        self.current_turn_string.set(self.RED_TURN)
+    def set_r_turn(self):
+        self.current_turn.set(self.R_TURN)
         
-    def set_blue_turn(self):
-        self.current_turn = self.BLUE_TURN
-        self.current_turn_string.set(self.BLUE_TURN)
+    def set_b_turn(self):
+        self.current_turn.set(self.B_TURN)
         
-# MAIN
-game = SOS_GAME_GUI()
-game.start()
+class START_MENU():
 
+    def __init__(self):
+        self.WIN_SIZE = Tk()
+        self.WIN_SIZE.geometry("600x600")
+        self.WIN_SIZE.title("Select Board Size")
+        self.record = BooleanVar()
+        self.label = Label(self.WIN_SIZE, text="Enter a board size (must be greater than 2)")
+        self.label.pack()
+        self.enter_size = Entry(self.WIN_SIZE)
+        self.enter_size.pack()
+        self.start_button = Button(self.WIN_SIZE, height=4, width=10, text="start game", command=lambda:self.start_game())
+        self.start_button.pack()
+        
+    def display_menu(self):
+        self.WIN_SIZE.mainloop()
+        
+    def start_game(self):
+        try:
+            board_size = self.enter_board_size.get()
+            board_size = int(board_size)
+        except ValueError:
+            messagebox.showerror(
+                'invalid board size', 'enter a valid board size please (number greater than 2)')
+            return None
+            
+        if board_size < 3:
+            messagebox.showerror(
+                'invalid board size', 'enter a valid board size please (number greater than 2)')
+            return None
+        else:
+            self.WIN_SIZE.destroy()
+            game = GAME_GUI(board_size)
+            game.gameboard_GUI()
+            game.start()
+            
+if __name__ == '__main__':
+    start = START_MENU()
+    start.display_menu()
+                    
+                    
