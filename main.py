@@ -82,10 +82,10 @@ class GAME_GUI(GAME_BOARD):
                 
         # simple and general game buttons
         simple_game_button = Radiobutton(self.WIN, text='Simple Game', variable=self.gametype,
-                                         value=self.SIMPLE_GAME, command=lambda: self.start_simple_game())
+                                         value=self.SIMPLE_GAME, command=lambda: self.start_simple())
         simple_game_button.grid(row=0, column=self.col_num+2)
         general_game_button = Radiobutton(self.WIN, text='General Game', variable=self.gametype,
-                                          value=self.GENERAL_GAME, command=lambda: self.start_general_game())
+                                          value=self.GENERAL_GAME, command=lambda: self.start_general())
         general_game_button.grid(row=0, column=self.col_num+3)
         
         # restart game button
