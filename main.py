@@ -230,5 +230,3 @@ class START_MENU():
 if __name__ == '__main__':
     start = START_MENU()
     start.display_menu()
-                    
-                    
