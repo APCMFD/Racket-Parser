@@ -167,14 +167,14 @@ class GAME_GUI(GAME_BOARD):
             tile['text'] = self.blue_player.option.get()
             color = self.blue_player.color
 
-            if self.is_simple_game():   
+            if self.is_simple():   
                 if self.full_board_check():
                     self.restart()
                     return None
                 else:
                     self.set_r_turn()
 
-            if self.is_general_game():
+            if self.is_general():
                 if self.full_board_check():
                     if self.full_board_check():
                         self.restart()
